@@ -399,6 +399,32 @@
     }
   })();
 
+  // mobile nav (hamburger) toggle
+  (function () {
+    var btn = $("navToggle"), links = $("navLinks");
+    if (!btn || !links) return;
+    function setOpen(open) {
+      links.classList.toggle("open", open);
+      btn.setAttribute("aria-expanded", String(open));
+      btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    }
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      setOpen(!links.classList.contains("open"));
+    });
+    // tapping a link closes the menu
+    links.addEventListener("click", function (e) {
+      if (e.target.closest("a")) setOpen(false);
+    });
+    // close on outside click or Escape
+    document.addEventListener("click", function (e) {
+      if (links.classList.contains("open") && !links.contains(e.target) && !btn.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && links.classList.contains("open")) { setOpen(false); btn.focus(); }
+    });
+  })();
+
   // active nav on scroll
   (function () {
     var links = [].slice.call(document.querySelectorAll(".nav-links a"));
