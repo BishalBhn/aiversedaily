@@ -34,7 +34,7 @@ window.AIVERSE_CONTENT = {
     "eyebrow": "Your daily AI briefing",
     "title": "Make sense of AI before it becomes noise.",
     "lead": "AIverse Daily helps you understand what changed in AI, why it matters, and what to do next — with sharp explainers, practical tutorials, and a calm point of view in a fast-moving space.",
-    "ctaPrimary": { "label": "See what we cover", "href": "#purpose" },
+    "ctaPrimary": { "label": "Explore the platform", "href": "#purpose" },
     "ctaSecondary": { "label": "Pitch a story", "href": "#contribute" },
     "feature": {
       "label": "What this platform is for",
