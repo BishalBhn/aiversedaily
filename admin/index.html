@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>AIverse Daily · CMS</title>
+<link rel="icon" href="../assets/aiverse-icon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="tb-left">
+      <span class="tb-mark" aria-hidden="true"></span>
+      <div class="tb-title"><strong>AIverse Daily</strong><span>Content manager</span></div>
+    </div>
+    <div class="tb-actions">
+      <span class="save-state" id="saveState">Draft saved</span>
+      <button class="btn ghost" id="btnImport">Import</button>
+      <button class="btn ghost" id="btnJson">Export JSON</button>
+      <button class="btn ghost" id="btnRevert">Revert</button>
+      <a class="btn ghost" id="btnPreview" href="../index.html?draft=1" target="_blank" rel="noopener">Preview ↗</a>
+      <button class="btn primary" id="btnPublish">Publish ↓</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar" id="sidebar" aria-label="Sections"></nav>
+    <main class="editor" id="editor"></main>
+    <aside class="preview" id="previewPane">
+      <div class="preview-bar">
+        <span>Live preview</span>
+        <div>
+          <button class="mini" id="btnRefresh" title="Refresh preview">⟳</button>
+          <button class="mini" id="btnHidePreview" title="Hide preview">✕</button>
+        </div>
+      </div>
+      <iframe id="previewFrame" src="../index.html?draft=1" title="Site preview"></iframe>
+    </aside>
+  </div>
+
+  <button class="show-preview" id="btnShowPreview" hidden>Preview</button>
+  <input type="file" id="fileInput" accept="application/json,.json" hidden />
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="../content.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
