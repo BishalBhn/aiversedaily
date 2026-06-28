@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AIverse Daily</title>
+<meta name="description" content="AIverse Daily — clear, calm analysis of what’s changing in AI." />
+<meta name="theme-color" content="#060914" />
+<!-- Apply saved theme before first paint to avoid a flash of the wrong theme -->
+<script>(function(){try{var t=localStorage.getItem("aiverse:theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="AIverse Daily" />
+<meta property="og:title" content="AIverse Daily" />
+<meta property="og:description" content="Clear, calm analysis of what’s changing in AI." />
+<meta property="og:image" content="https://aiversedaily.com/assets/aiverse-avatar-1080.png" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="icon" href="assets/aiverse-icon.svg" />
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+<link rel="manifest" href="site.webmanifest" />
+<link rel="canonical" href="https://aiversedaily.com/" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Brand mark sprite (used in nav + footer) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <radialGradient id="bmPlanet" cx="42%" cy="40%" r="72%">
+        <stop offset="0%" stop-color="#ffffff"/><stop offset="16%" stop-color="#c8c0ff"/>
+        <stop offset="42%" stop-color="#8b7dff"/><stop offset="74%" stop-color="#5a4bd2"/>
+        <stop offset="100%" stop-color="#160f3a"/>
+      </radialGradient>
+      <linearGradient id="bmRing" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#31d9cb"/><stop offset="100%" stop-color="#8b7dff"/>
+      </linearGradient>
+      <radialGradient id="bmSpark" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff4cf"/><stop offset="45%" stop-color="#ffd86d"/><stop offset="100%" stop-color="#ffb43d"/>
+      </radialGradient>
+      <filter id="bmGlow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4.5"/></filter>
+      <clipPath id="bmFront"><rect x="0" y="62" width="120" height="58"/></clipPath>
+      <symbol id="brandMark" viewBox="0 0 120 120">
+        <g transform="rotate(-22 60 62)">
+          <ellipse cx="60" cy="62" rx="49" ry="16.5" fill="none" stroke="url(#bmRing)" stroke-width="3.4" opacity="0.35" filter="url(#bmGlow)"/>
+          <ellipse cx="60" cy="62" rx="49" ry="16.5" fill="none" stroke="url(#bmRing)" stroke-width="3.4"/>
+        </g>
+        <circle cx="60" cy="62" r="29" fill="#8b7dff" opacity="0.28" filter="url(#bmGlow)"/>
+        <circle cx="60" cy="62" r="23" fill="url(#bmPlanet)"/>
+        <g transform="rotate(-22 60 62)" clip-path="url(#bmFront)">
+          <ellipse cx="60" cy="62" rx="49" ry="16.5" fill="none" stroke="url(#bmRing)" stroke-width="3.4"/>
+        </g>
+        <circle cx="83.1" cy="38.7" r="8.5" fill="#ffd86d" opacity="0.5" filter="url(#bmGlow)"/>
+        <circle cx="83.1" cy="38.7" r="4.6" fill="url(#bmSpark)"/>
+        <circle cx="82.2" cy="37.6" r="1.6" fill="#fffaf0"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="sky" aria-hidden="true"></div>
+  <div class="stars" aria-hidden="true"></div>
+
+  <header>
+    <nav class="nav" aria-label="Primary">
+      <div class="nav-inner nav-inner-article">
+        <a href="/" class="brand" aria-label="AIverse Daily home">
+          <svg class="brand-mark" aria-hidden="true"><use href="#brandMark"/></svg>
+          <span class="brand-name"><span class="b-ai">AI</span><span class="b-verse">verse</span><span class="b-daily">Daily</span></span>
+        </a>
+        <div class="nav-actions">
+          <a href="/#blogs" class="btn btn-ghost btn-sm">All blogs</a>
+          <button class="toggle" id="themeToggle" aria-label="Switch colour theme" aria-pressed="false">
+            <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <noscript><div class="wrap" style="padding:60px 24px;text-align:center;color:#aab4d4">This article needs JavaScript enabled. <a href="/#blogs" style="color:#8b7dff">Back to all blogs →</a></div></noscript>
+
+  <main id="articleMain"></main>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-bottom" id="footBottom"></div>
+    </div>
+  </footer>
+
+  <script src="content.js"></script>
+  <script src="article.js"></script>
+</body>
+</html>

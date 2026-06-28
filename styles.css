@@ -485,18 +485,61 @@
   .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
   .story { display: flex; flex-direction: column; }
   .story-thumb {
+    display: block;
     height: 178px; position: relative; overflow: hidden;
   }
   .thumb-violet { background: radial-gradient(circle at 30% 25%, rgba(139,125,255,0.85), transparent 55%), linear-gradient(135deg, #221a52, #0b0f24); }
   .thumb-teal { background: radial-gradient(circle at 70% 30%, rgba(49,217,203,0.8), transparent 55%), linear-gradient(135deg, #0d3b39, #0b0f24); }
   .thumb-coral { background: radial-gradient(circle at 40% 70%, rgba(255,138,98,0.8), transparent 55%), linear-gradient(135deg, #3b1f17, #0b0f24); }
+  .thumb-gold { background: radial-gradient(circle at 35% 30%, rgba(255,216,109,0.82), transparent 55%), linear-gradient(135deg, #3a2f12, #0b0f24); }
   .story-body { padding: 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
   .story-body .meta { display: flex; gap: 8px; flex-wrap: wrap; }
   .story-body h3 { margin: 2px 0; }
   .story-body p { color: var(--ink-soft); font-size: 0.92rem; margin: 0; flex: 1; }
+  .card-title-link { color: var(--ink); transition: color 0.2s var(--ease); }
+  .card-title-link:hover { color: var(--violet); }
   .story-link { color: var(--teal); font-weight: 600; font-size: 0.9rem; margin-top: 4px; }
   .story-link::after { content: " →"; transition: margin 0.25s var(--ease); }
   .card:hover .story-link::after { margin-left: 4px; }
+
+  /* ---------- Article page ---------- */
+  .btn-sm { padding: 8px 14px; font-size: 0.86rem; }
+  .nav-inner-article { grid-template-columns: 1fr auto; }
+  .article { padding: 40px 0 72px; }
+  .article-wrap { max-width: 760px; }
+  .article-back {
+    display: inline-block; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem;
+    margin-bottom: 22px; transition: color 0.2s var(--ease);
+  }
+  .article-back:hover { color: var(--ink); }
+  .article-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .article h1 {
+    font-family: var(--serif); font-weight: 700; line-height: 1.12;
+    font-size: clamp(2rem, 5vw, 3rem); margin: 0 0 16px;
+  }
+  .article-lead { font-size: 1.18rem; line-height: 1.6; color: var(--ink-soft); margin: 0 0 28px; }
+  .article-thumb {
+    height: 300px; border-radius: var(--radius-lg, 20px); margin-bottom: 36px;
+    border: 1px solid var(--glass-border);
+  }
+  .article-body { font-size: 1.07rem; line-height: 1.85; color: var(--ink); }
+  .article-body p { margin: 0 0 22px; color: var(--ink-soft); }
+  .article-body h2 {
+    font-family: var(--serif); font-weight: 600; font-size: 1.5rem;
+    line-height: 1.25; margin: 38px 0 14px; color: var(--ink);
+  }
+  .article-source {
+    margin-top: 12px; padding-top: 18px; border-top: 1px solid var(--glass-border);
+    font-size: 0.92rem; color: var(--ink-soft);
+  }
+  .article-source a { color: var(--teal); font-weight: 600; }
+  .article-related { margin-top: 56px; padding-top: 36px; border-top: 1px solid var(--glass-border); }
+  .article-related h2 { font-family: var(--serif); font-size: 1.4rem; margin: 0 0 22px; }
+  .article-related .grid-3 { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 720px) {
+    .article-thumb { height: 200px; }
+    .article-related .grid-3 { grid-template-columns: 1fr; }
+  }
 
   /* Tutorials grid */
   .tut { padding: 26px; display: flex; flex-direction: column; gap: 14px; }

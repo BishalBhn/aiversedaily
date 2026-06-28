@@ -87,7 +87,7 @@
         ] }] },
 
     { id: "blogs", label: "Blog", icon: "📝",
-      intro: "Longer-form posts and essays to showcase on the homepage.",
+      intro: "Longer-form posts. Each one gets its own readable page at /blog/<slug>; the homepage cards link to it.",
       fields: [
         { path: "blogs.heading", label: "Section heading", type: "text", half: true },
         { path: "blogs.sub", label: "Section subtitle", type: "text", half: true }
@@ -95,12 +95,15 @@
       lists: [{ path: "blogs.items", title: "Blog posts", addLabel: "Add post", nameKey: "title",
         fields: [
           { key: "title", label: "Title", type: "text" },
-          { key: "excerpt", label: "Excerpt", type: "textarea" },
+          { key: "slug", label: "URL slug (e.g. my-first-post)", type: "text", half: true },
+          { key: "meta", label: "Meta (e.g. 6 min read)", type: "text", half: true },
+          { key: "excerpt", label: "Excerpt / summary", type: "textarea", help: "Shown on the card and used as the article’s lead + SEO description." },
+          { key: "body", label: "Full article", type: "textarea", help: "Leave a blank line between paragraphs. Start a line with “## ” to make a subheading." },
           { key: "tag", label: "Tag", type: "text", half: true },
           { key: "tagColor", label: "Tag colour", type: "select", options: TAG, half: true },
           { key: "thumb", label: "Image tint", type: "select", options: TAG, half: true },
-          { key: "meta", label: "Meta (e.g. 8 min read)", type: "text", half: true },
-          { key: "link", label: "Link", type: "text" }
+          { key: "sourceName", label: "Source name (optional)", type: "text", half: true },
+          { key: "sourceUrl", label: "Source URL (optional)", type: "text" }
         ] }] },
 
     { id: "newsletter", label: "Newsletter", icon: "✉",

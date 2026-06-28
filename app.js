@@ -32,6 +32,12 @@
     if (/^[a-z][a-z0-9+.-]*:/i.test(v)) return "#";           // any other explicit scheme → reject
     return esc(v);                                            // bare relative path (e.g. page.html)
   }
+  function slugify(s) {
+    return String(s == null ? "" : s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  }
+  function blogUrl(it) {
+    return "/blog/" + encodeURIComponent(it.slug || slugify(it.title));
+  }
 
   // ---------- head / SEO ----------
   if (content.site) {
@@ -130,14 +136,15 @@
     var b = content.blogs || {};
     head($("blogsHead"), null, b.heading, b.sub);
     $("blogsGrid").innerHTML = (b.items || []).map(function (it) {
+      var url = blogUrl(it);
       return '<article class="card story reveal">' +
-        '<div class="story-thumb thumb-' + esc(it.thumb || "violet") + '" aria-hidden="true"></div>' +
+        '<a class="story-thumb thumb-' + esc(it.thumb || "violet") + '" href="' + esc(url) + '" aria-label="' + esc(it.title) + '"></a>' +
         '<div class="story-body">' +
           '<div class="meta"><span class="tag tag-' + esc(it.tagColor || "violet") + '">' + esc(it.tag) + "</span>" +
             (it.meta ? '<span class="tag tag-gold">' + esc(it.meta) + "</span>" : "") + "</div>" +
-          "<h3>" + esc(it.title) + "</h3>" +
+          '<h3><a class="card-title-link" href="' + esc(url) + '">' + esc(it.title) + "</a></h3>" +
           "<p>" + esc(it.excerpt) + "</p>" +
-          (it.link ? '<a class="story-link" href="' + safeUrl(it.link) + '"' + (/^https?:/i.test(it.link) ? ' target="_blank" rel="noopener"' : "") + ">Read article</a>" : "") +
+          '<a class="story-link" href="' + esc(url) + '">Read article</a>' +
         "</div></article>";
     }).join("");
   })();
