@@ -56,6 +56,22 @@ Optional: `GITHUB_REPO` (default `BishalBhn/aiversedaily`) and `GITHUB_BRANCH` (
 
 After setting them, redeploy once so the function picks them up. Until they’re set, the site still works — only the Publish button is inactive.
 
+## AI Assistant (chat + voice) and the auto-writer
+
+Open `/admin/` → **AI Assistant** (top of the sidebar).
+
+- **Chat / voice editor** — type or tap 🎙 and speak an instruction ("change the hero headline to…", "add a blog about open-source models", "remove the third tutorial"). The assistant edits your draft and updates the live preview. Nothing goes live until you click **Publish ↓**.
+- **Auto-written blog drafts** — a scheduled writer researches a current AI story with web search and writes one post every ~2 days into a pending queue (`drafts.json`). They appear under **AI blog drafts** for you to **Approve & add** (drops it into the Blog section to review, then Publish) or **Discard**. Nothing is auto-published.
+
+These features need two more env vars (in addition to `ADMIN_PASSWORD` + `GITHUB_TOKEN` above):
+
+| Variable | What it is |
+| --- | --- |
+| `ANTHROPIC_API_KEY` | Your Claude API key (from [platform.claude.com](https://platform.claude.com)). Powers both the chat agent and the auto-writer. |
+| `CRON_SECRET` | Any random string. Vercel sends it to the cron job so only Vercel can trigger the auto-writer. |
+
+The auto-writer runs on a Vercel Cron (`vercel.json` → `crons`, daily at 09:00 UTC) and self-gates to roughly every two days. Model defaults to `claude-opus-4-8`; override with the optional `CLAUDE_MODEL` env var. Voice input uses the browser's built-in speech recognition (Chrome/Edge/Safari).
+
 > **Why commit instead of a live database?** The site stays fully static: fast, cheap to host, SEO-pre-rendered, and every publish is a normal git commit you can review or roll back. `build.js` and `/api/publish` share one renderer (`lib/prerender.js`) so the SEO fallback can never drift from what’s published.
 
 - **Preview ↗** opens the site using your unsaved draft.

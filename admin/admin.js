@@ -219,6 +219,12 @@
   try { data = JSON.parse(localStorage.getItem("aiverse:draft") || "null"); } catch (e) { data = null; }
   if (!data) data = clone(base);
   var activeId = SCHEMA[0].id;
+  var aiState = { messages: [] };
+  function escHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
 
   // ---------- path helpers ----------
   function get(obj, path) { return path.split(".").reduce(function (o, k) { return o == null ? undefined : o[k]; }, obj); }
@@ -241,6 +247,11 @@
   // ---------- sidebar ----------
   function renderSidebar() {
     sidebar.innerHTML = "";
+    sidebar.appendChild(el("div", "s-sep", "Assistant"));
+    var ai = el("button", "s-item ai-item" + (activeId === "__ai" ? " active" : ""),
+      '<span class="ic">✨</span><span>AI Assistant</span>');
+    ai.onclick = function () { activeId = "__ai"; renderSidebar(); renderEditor(); editor.scrollTop = 0; };
+    sidebar.appendChild(ai);
     SCHEMA.forEach(function (s) {
       if (s.group) sidebar.appendChild(el("div", "s-sep", s.group));
       var b = el("button", "s-item" + (s.id === activeId ? " active" : ""),
@@ -282,6 +293,7 @@
 
   // ---------- editor ----------
   function renderEditor() {
+    if (activeId === "__ai") { renderAI(); return; }
     var s = SCHEMA.filter(function (x) { return x.id === activeId; })[0];
     editor.innerHTML = "";
     var head = el("div", "ed-head", "<h1>" + s.label + "</h1>" + (s.intro ? "<p>" + s.intro + "</p>" : ""));
@@ -499,6 +511,187 @@
   var showBtn = document.getElementById("btnShowPreview");
   document.getElementById("btnHidePreview").onclick = function () { pane.style.display = "none"; showBtn.hidden = false; };
   showBtn.onclick = function () { pane.style.display = "flex"; showBtn.hidden = true; refreshPreview(); };
+
+  // ---------- AI assistant panel ----------
+  function renderAI() {
+    editor.innerHTML = "";
+    editor.appendChild(el("div", "ed-head",
+      "<h1>AI Assistant</h1><p>Tell the assistant what to change — by typing or voice. It edits your draft and previews it; click <strong>Publish ↓</strong> when you're happy. Review auto-written blog drafts below.</p>"));
+
+    var chat = el("div", "ai-chat");
+    var log = el("div", "ai-log"); log.id = "aiLog";
+    chat.appendChild(log);
+    var row = el("div", "ai-input-row");
+    var ta = el("textarea", "ai-text"); ta.id = "aiText";
+    ta.placeholder = "e.g. Change the hero headline to “Today’s AI, decoded”  •  Add a blog about open-source models";
+    var mic = el("button", "ai-mic", "🎙"); mic.type = "button"; mic.title = "Speak";
+    var send = el("button", "ai-send", "Send"); send.type = "button";
+    row.appendChild(ta); row.appendChild(mic); row.appendChild(send);
+    chat.appendChild(row);
+    editor.appendChild(chat);
+
+    var drafts = el("div", "ai-drafts"); drafts.id = "aiDrafts";
+    editor.appendChild(drafts);
+
+    renderAILog();
+    setupMic(mic, ta);
+    send.onclick = function () { submitChat(ta.value); };
+    ta.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); submitChat(ta.value); }
+    });
+    loadDrafts();
+  }
+
+  function renderAILog() {
+    var log = document.getElementById("aiLog");
+    if (!log) return;
+    if (!aiState.messages.length) {
+      log.innerHTML = '<p class="ai-empty">Ask me to change anything — copy, sections, links, or whole blog posts. I edit your draft; you Publish when ready.</p>';
+      return;
+    }
+    log.innerHTML = aiState.messages.map(function (m) {
+      return '<div class="ai-msg ai-' + m.role + (m.pending ? " ai-pending" : "") + '">' + escHtml(m.text) + "</div>";
+    }).join("");
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function submitChat(text) {
+    text = (text || "").trim();
+    if (!text) return;
+    var pw = getPassword(false);
+    if (!pw) return;
+    var hist = aiState.messages.filter(function (m) { return !m.pending; });
+    hist = hist.slice(-8).map(function (m) { return { role: m.role, text: m.text }; });
+    aiState.messages.push({ role: "user", text: text });
+    aiState.messages.push({ role: "assistant", text: "Thinking…", pending: true });
+    renderAILog();
+    var ta = document.getElementById("aiText"); if (ta) ta.value = "";
+
+    fetch("/api/agent/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-admin-password": pw },
+      body: JSON.stringify({ message: text, content: data, history: hist }),
+    }).then(function (r) { return r.json().then(function (b) { return { status: r.status, body: b }; }); })
+      .then(function (r) {
+        aiState.messages = aiState.messages.filter(function (m) { return !m.pending; });
+        if (r.status === 200 && r.body.ok) {
+          if (r.body.changed && r.body.content) { data = r.body.content; save(); }
+          aiState.messages.push({ role: "assistant", text: r.body.summary || "Done." });
+        } else if (r.status === 401) {
+          try { sessionStorage.removeItem("aiverse:pubpass"); } catch (e) {}
+          aiState.messages.push({ role: "assistant", text: "Incorrect password — try sending again." });
+        } else {
+          aiState.messages.push({ role: "assistant", text: (r.body && r.body.error) || "Something went wrong." });
+        }
+        renderAILog();
+      })
+      .catch(function () {
+        aiState.messages = aiState.messages.filter(function (m) { return !m.pending; });
+        aiState.messages.push({ role: "assistant", text: "Couldn’t reach the assistant (available on the deployed site)." });
+        renderAILog();
+      });
+  }
+
+  function setupMic(mic, ta) {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { mic.disabled = true; mic.classList.add("disabled"); mic.title = "Voice input isn’t supported in this browser"; return; }
+    var rec = new SR(); rec.lang = "en-US"; rec.interimResults = true; rec.continuous = false;
+    var listening = false, baseText = "";
+    rec.onresult = function (e) {
+      var t = "";
+      for (var i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
+      ta.value = (baseText ? baseText + " " : "") + t;
+    };
+    rec.onend = function () { listening = false; mic.classList.remove("rec"); };
+    rec.onerror = function () { listening = false; mic.classList.remove("rec"); };
+    mic.onclick = function () {
+      if (listening) { rec.stop(); return; }
+      baseText = ta.value.trim(); listening = true; mic.classList.add("rec");
+      try { rec.start(); } catch (e) { listening = false; mic.classList.remove("rec"); }
+    };
+  }
+
+  function loadDrafts() {
+    var wrap = document.getElementById("aiDrafts");
+    if (!wrap) return;
+    wrap.innerHTML = '<div class="ai-drafts-head"><h3>AI blog drafts</h3>' +
+      '<button class="add-btn ai-refresh" type="button" style="width:auto">↻ Check for drafts</button></div>' +
+      '<div id="aiDraftList"></div>';
+    wrap.querySelector(".ai-refresh").onclick = fetchDrafts;
+    var pw = null; try { pw = sessionStorage.getItem("aiverse:pubpass"); } catch (e) {}
+    if (pw) fetchDrafts();
+  }
+
+  function fetchDrafts() {
+    var list = document.getElementById("aiDraftList");
+    var pw = getPassword(false);
+    if (!pw) { if (list) list.innerHTML = ""; return; }
+    if (list) list.innerHTML = '<p class="ai-empty">Loading…</p>';
+    fetch("/api/agent/drafts", { headers: { "x-admin-password": pw } })
+      .then(function (r) { return r.json().then(function (b) { return { status: r.status, body: b }; }); })
+      .then(function (r) {
+        if (r.status !== 200 || !r.body.ok) {
+          if (r.status === 401) { try { sessionStorage.removeItem("aiverse:pubpass"); } catch (e) {} }
+          if (list) list.innerHTML = '<p class="ai-empty">' + escHtml((r.body && r.body.error) || "Couldn’t load drafts.") + "</p>";
+          return;
+        }
+        renderDraftList(r.body.drafts || []);
+      })
+      .catch(function () { if (list) list.innerHTML = '<p class="ai-empty">Couldn’t reach the server (deployed site only).</p>'; });
+  }
+
+  function renderDraftList(drafts) {
+    var list = document.getElementById("aiDraftList");
+    if (!list) return;
+    if (!drafts.length) {
+      list.innerHTML = '<p class="ai-empty">No pending drafts. The writer queues a new one about every two days.</p>';
+      return;
+    }
+    list.innerHTML = drafts.map(function (d) {
+      return '<div class="ai-draft">' +
+        '<div class="ai-draft-top"><span class="tag tag-' + escHtml(d.tagColor || "violet") + '">' + escHtml(d.tag || "AI") + "</span>" +
+          '<span class="ai-draft-meta">' + escHtml(d.meta || "") + "</span></div>" +
+        "<h4>" + escHtml(d.title) + "</h4>" +
+        '<p class="ai-draft-ex">' + escHtml(d.excerpt || "") + "</p>" +
+        (d.sourceUrl ? '<p class="ai-draft-src">Source: ' + escHtml(d.sourceName || d.sourceUrl) + "</p>" : "") +
+        '<div class="ai-draft-actions"><button class="btn primary ai-approve" type="button">Approve &amp; add</button>' +
+          '<button class="mini ai-toggle" type="button" title="Show full text">⤢</button>' +
+          '<button class="mini danger ai-discard" type="button" title="Discard">✕</button></div>' +
+        '<div class="ai-draft-body" hidden>' + escHtml(d.body || "").replace(/\n/g, "<br>") + "</div>" +
+      "</div>";
+    }).join("");
+    list.querySelectorAll(".ai-draft").forEach(function (card, i) {
+      var d = drafts[i];
+      card.querySelector(".ai-approve").onclick = function () { approveDraft(d); };
+      card.querySelector(".ai-discard").onclick = function () { discardDraft(d.id, true); };
+      card.querySelector(".ai-toggle").onclick = function () { var b = card.querySelector(".ai-draft-body"); b.hidden = !b.hidden; };
+    });
+  }
+
+  function approveDraft(d) {
+    if (!data.blogs || typeof data.blogs !== "object") data.blogs = { heading: "From the blog", items: [] };
+    if (!Array.isArray(data.blogs.items)) data.blogs.items = [];
+    data.blogs.items.unshift({
+      slug: d.slug, title: d.title, excerpt: d.excerpt, body: d.body,
+      tag: d.tag, tagColor: d.tagColor, thumb: d.thumb, meta: d.meta,
+      sourceName: d.sourceName, sourceUrl: d.sourceUrl,
+    });
+    save();
+    discardDraft(d.id, true);
+    toast("Added to Blog. Review it, then Publish ↓ to go live.");
+  }
+
+  function discardDraft(id, reload) {
+    var pw = getPassword(false);
+    if (!pw) return;
+    fetch("/api/agent/drafts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-admin-password": pw },
+      body: JSON.stringify({ action: "discard", id: id }),
+    }).then(function (r) { return r.json(); })
+      .then(function () { if (reload !== false) fetchDrafts(); })
+      .catch(function () {});
+  }
 
   // ---------- boot ----------
   renderSidebar();

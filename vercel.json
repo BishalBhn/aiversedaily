@@ -5,6 +5,13 @@
   "rewrites": [
     { "source": "/blog/:slug", "destination": "/article" }
   ],
+  "functions": {
+    "api/cron/post-blog.js": { "maxDuration": 60 },
+    "api/agent/chat.js": { "maxDuration": 60 }
+  },
+  "crons": [
+    { "path": "/api/cron/post-blog", "schedule": "0 9 * * *" }
+  ],
   "headers": [
     {
       "source": "/admin/(.*)",
