@@ -22,6 +22,16 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
+  // Allow only safe URL schemes for content-supplied links/sources.
+  // Blocks javascript:, data:, vbscript:, etc. — returns "#" for anything unsafe.
+  function safeUrl(s) {
+    var v = String(s == null ? "" : s).trim();
+    if (!v) return "";
+    if (/^(https?:|mailto:|tel:)/i.test(v)) return esc(v);   // absolute, vetted schemes
+    if (/^[#/?]/.test(v)) return esc(v);                      // same-page anchors / relative paths
+    if (/^[a-z][a-z0-9+.-]*:/i.test(v)) return "#";           // any other explicit scheme → reject
+    return esc(v);                                            // bare relative path (e.g. page.html)
+  }
 
   // ---------- head / SEO ----------
   if (content.site) {
@@ -54,7 +64,7 @@
   (function () {
     var nav = content.site && content.site.nav || [];
     $("navLinks").innerHTML = nav.map(function (n, i) {
-      return '<li><a href="' + esc(n.href) + '"' + (i === 0 ? ' class="active"' : "") + ">" + esc(n.label) + "</a></li>";
+      return '<li><a href="' + safeUrl(n.href) + '"' + (i === 0 ? ' class="active"' : "") + ">" + esc(n.label) + "</a></li>";
     }).join("");
   })();
 
@@ -68,8 +78,8 @@
         "<h1>" + esc(h.title) + "</h1>" +
         '<p class="lead">' + esc(h.lead) + "</p>" +
         '<div class="hero-cta">' +
-          (h.ctaPrimary ? '<a href="' + esc(h.ctaPrimary.href) + '" class="btn btn-primary">' + esc(h.ctaPrimary.label) + "</a>" : "") +
-          (h.ctaSecondary ? '<a href="' + esc(h.ctaSecondary.href) + '" class="btn btn-ghost">' + esc(h.ctaSecondary.label) + "</a>" : "") +
+          (h.ctaPrimary ? '<a href="' + safeUrl(h.ctaPrimary.href) + '" class="btn btn-primary">' + esc(h.ctaPrimary.label) + "</a>" : "") +
+          (h.ctaSecondary ? '<a href="' + safeUrl(h.ctaSecondary.href) + '" class="btn btn-ghost">' + esc(h.ctaSecondary.label) + "</a>" : "") +
         "</div>" +
       "</div>" +
       '<div class="hero-visual reveal"><div class="orbit-stage" id="orbit">' +
@@ -110,7 +120,7 @@
             (it.meta ? '<span class="tag tag-gold">' + esc(it.meta) + "</span>" : "") + "</div>" +
           "<h3>" + esc(it.title) + "</h3>" +
           "<p>" + esc(it.excerpt) + "</p>" +
-          (it.link ? '<a class="story-link" href="' + esc(it.link) + '">Read more</a>' : "") +
+          (it.link ? '<a class="story-link" href="' + safeUrl(it.link) + '">Read more</a>' : "") +
         "</div></article>";
     }).join("");
   })();
@@ -127,7 +137,7 @@
             (it.meta ? '<span class="tag tag-gold">' + esc(it.meta) + "</span>" : "") + "</div>" +
           "<h3>" + esc(it.title) + "</h3>" +
           "<p>" + esc(it.excerpt) + "</p>" +
-          (it.link ? '<a class="story-link" href="' + esc(it.link) + '">Read article</a>' : "") +
+          (it.link ? '<a class="story-link" href="' + safeUrl(it.link) + '">Read article</a>' : "") +
         "</div></article>";
     }).join("");
   })();
@@ -222,7 +232,7 @@
     head($("videosHead"), v.eyebrow, v.heading, v.sub);
     var items = v.items || [];
     $("videosGrid").innerHTML = items.map(function (item) {
-      var thumb = item.thumbnail ? '<img class="video-thumb" src="' + esc(item.thumbnail) + '" alt="' + esc(item.title || "Video thumbnail") + '" loading="lazy" />' : '<div class="video-thumb placeholder" aria-hidden="true"></div>';
+      var thumb = item.thumbnail ? '<img class="video-thumb" src="' + safeUrl(item.thumbnail) + '" alt="' + esc(item.title || "Video thumbnail") + '" loading="lazy" />' : '<div class="video-thumb placeholder" aria-hidden="true"></div>';
       var sourceTag = item.type === "video" ? "Native video" : "YouTube";
       return '<article class="card video-card reveal">' +
         '<div class="video-preview">' + thumb + '<button class="video-play" type="button" aria-label="Play ' + esc(item.title || "video") + '">▶</button></div>' +
@@ -250,10 +260,10 @@
       modalTitle.textContent = item.title || "Video";
       if (type === "youtube") {
         var id = url.match(/(?:youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtube\.com\/shorts\/|youtu\.be\/)([A-Za-z0-9_-]{11})/);
-        var embedUrl = id ? "https://www.youtube-nocookie.com/embed/" + id[1] + "?rel=0&modestbranding=1&playsinline=1" : url;
+        var embedUrl = id ? "https://www.youtube-nocookie.com/embed/" + id[1] + "?rel=0&modestbranding=1&playsinline=1" : safeUrl(url);
         modalBody.innerHTML = '<div class="video-modal-player-frame"><iframe src="' + esc(embedUrl) + '" title="' + esc(item.title || "Video") + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>';
       } else {
-        modalBody.innerHTML = '<div class="video-modal-player-frame"><video controls preload="metadata" poster="' + esc(item.poster || item.thumbnail || "") + '"><source src="' + esc(url) + '" type="video/mp4" /></video></div>';
+        modalBody.innerHTML = '<div class="video-modal-player-frame"><video controls preload="metadata" poster="' + safeUrl(item.poster || item.thumbnail || "") + '"><source src="' + safeUrl(url) + '" type="video/mp4" /></video></div>';
       }
       modal.hidden = false;
       document.body.classList.add("modal-open");
@@ -483,7 +493,13 @@
           if (ok) form.reset();
         };
         var url = resolve(endpoints[form.dataset.form]);
-        if (!url) { done(true); return; } // demo mode — no endpoint configured yet
+        if (!url) {
+          // No endpoint configured — demo mode. Warn the operator so submissions
+          // aren't silently lost; the visitor still sees a friendly confirmation.
+          console.warn('[AIverse Daily] Form "' + form.dataset.form + '" has no endpoint configured (site.forms.' + form.dataset.form + '). Submission was NOT sent. Configure it in /admin/ → Forms.');
+          done(true);
+          return;
+        }
         if (btn) { btn.disabled = true; btn.dataset.label = btn.textContent; btn.textContent = "Sending…"; }
         fetch(url, { method: "POST", body: new FormData(form), headers: { Accept: "application/json" } })
           .then(function (r) { done(r.ok); })

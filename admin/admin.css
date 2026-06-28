@@ -108,13 +108,37 @@ select.inp{cursor:pointer}
   background:var(--panel);border:1px solid var(--border2);border-radius:999px;
   padding:11px 20px;font-size:.86rem;font-weight:600;box-shadow:0 16px 40px -16px rgba(0,0,0,.7)}
 
-@media(max-width:1150px){ .layout{grid-template-columns:210px 1fr} .preview{display:none} .show-preview{display:block} }
+/* ---------- responsive ---------- */
+@media(max-width:1150px){
+  .layout{grid-template-columns:200px 1fr}
+  /* preview is hidden by default and opens as a full-screen overlay on demand */
+  .preview{display:none;position:fixed;inset:0;z-index:40;border-left:none}
+  .show-preview{display:block}
+}
 @media(max-width:720px){
-  .layout{grid-template-columns:1fr}
-  .sidebar{display:flex;gap:6px;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);padding:10px}
-  .s-item{white-space:nowrap;margin:0}
-  .s-sep{display:none}
-  .editor{padding:22px 18px 80px}
-  .row2{grid-template-columns:1fr}
+  /* topbar wraps; actions get their own full-width row */
+  .topbar{flex-wrap:wrap;gap:10px;padding:10px 14px}
+  .tb-actions{width:100%;justify-content:space-between;gap:6px}
+  .tb-actions .btn{flex:1 1 0;min-width:0;padding:9px 8px;font-size:.78rem;text-align:center}
+  .save-state{order:-1;width:100%;margin:0;text-align:right}
   .tb-title span{display:none}
+
+  /* single column; sections become a horizontal pill scroller */
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    border-right:none;border-bottom:1px solid var(--border);padding:10px}
+  .s-item{white-space:nowrap;margin:0;flex:0 0 auto}
+  .s-sep{display:none}
+
+  .editor{padding:20px 16px 96px}
+  .ed-head h1{font-size:1.4rem}
+  .group{padding:16px}
+  .row2{grid-template-columns:1fr}
+  /* 16px inputs stop iOS from zooming in on focus */
+  .inp,select.inp,textarea.inp{font-size:16px}
+  /* larger touch targets */
+  .mini{width:36px;height:36px;font-size:.95rem}
+  .item-ctrls{gap:6px}
+  .add-btn{padding:14px}
+  .toast{left:16px;right:16px;transform:none;text-align:center}
 }

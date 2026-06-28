@@ -65,6 +65,30 @@
       "caption": "Staying valuable when everyone has the same model."
     }
   },
+  "purpose": {
+    "heading": "What this platform is for",
+    "sub": "AIverse Daily exists to make the AI era feel less chaotic and more usable.",
+    "items": [
+      {
+        "label": "Decode",
+        "title": "We make the shifts understandable",
+        "body": "We translate new releases, tools, and trends into clear language so you can tell signal from hype without spending all day scrolling.",
+        "tagColor": "violet"
+      },
+      {
+        "label": "Practice",
+        "title": "We turn ideas into action",
+        "body": "Short tutorials and practical explainers help you use AI with more confidence, whether you are building, learning, or just keeping up.",
+        "tagColor": "teal"
+      },
+      {
+        "label": "Steady",
+        "title": "We help people adapt with calm",
+        "body": "The goal is not to chase every headline. It is to give you a reliable way to stay informed and useful in a changing world.",
+        "tagColor": "coral"
+      }
+    ]
+  },
   "stories": {
     "heading": "What changed this week",
     "sub": "The releases and shifts worth your attention — sorted from the noise.",
@@ -131,7 +155,6 @@
       }
     ]
   },
-
   "newsletter": {
     "eyebrow": "Daily digest",
     "title": "One short email. Today’s AI, decoded.",
@@ -233,7 +256,6 @@
       }
     ]
   },
-
   "contribute": {
     "eyebrow": "Open call",
     "heading": "Pitch us something worth reading",

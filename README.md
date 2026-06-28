@@ -13,6 +13,7 @@ aiverse-daily/
 ├─ app.js            Renders the site + interactions (theme, parallax, forms)
 ├─ content.js        ← THE ONLY FILE YOU EDIT FOR CONTENT (source of truth)
 ├─ content.json      Same content as JSON (for import/export/portability)
+├─ build.js          Pre-renders content into index.html for SEO / no-JS crawlers
 ├─ admin/
 │  ├─ index.html     The CMS dashboard  → open /admin/
 │  ├─ admin.css
@@ -38,7 +39,24 @@ Then open:
 
 **A. The CMS (recommended).** Open `/admin/`. Every part of the site is editable from the sidebar: Site & SEO, Social links, Navigation, Hero, Stories, Newsletter, Tutorials, Podcast, Contribute, About, Footer. Add, reorder, duplicate, or delete cards. Changes autosave to a draft and show in the live preview.
 
-When you’re happy, click **Publish ↓**. That downloads a new `content.js`. Replace the `content.js` in this folder with the downloaded one (or commit it) and redeploy. That’s the publish step.
+When you’re happy, click **Publish ↓** and enter the publish password. The CMS sends the content to `/api/publish`, which commits a fresh `content.js`, `content.json`, and a re-rendered `index.html` to GitHub in one commit. Vercel auto-redeploys, and the change is live in ~30 seconds. No manual file editing.
+
+> **Editing by hand instead?** Edit `content.js` directly, run `node build.js` to refresh the SEO fallback in `index.html`, then commit both and push. Same result.
+
+### One-time setup for live publishing
+
+The publish endpoint needs two secrets, set as Vercel environment variables (Project → Settings → Environment Variables, or `vercel env add`):
+
+| Variable | What it is |
+| --- | --- |
+| `ADMIN_PASSWORD` | The password the CMS asks for before publishing. |
+| `GITHUB_TOKEN` | A GitHub **fine-grained** personal access token, scoped to this repo, with **Contents: Read and write**. |
+
+Optional: `GITHUB_REPO` (default `BishalBhn/aiversedaily`) and `GITHUB_BRANCH` (default `main`).
+
+After setting them, redeploy once so the function picks them up. Until they’re set, the site still works — only the Publish button is inactive.
+
+> **Why commit instead of a live database?** The site stays fully static: fast, cheap to host, SEO-pre-rendered, and every publish is a normal git commit you can review or roll back. `build.js` and `/api/publish` share one renderer (`lib/prerender.js`) so the SEO fallback can never drift from what’s published.
 
 - **Preview ↗** opens the site using your unsaved draft.
 - **Export JSON** / **Import** move content between machines or back it up.
@@ -80,7 +98,7 @@ After deploy, update `site.url` and the social-preview image path in `index.html
 
 ## What "static" means here
 
-The whole site is HTML + CSS + JS. There is **no server and no database** — Vercel just serves files. Dynamic-feeling pieces are handled without a backend: content comes from `content.js`, and forms POST directly to Formspree. That's why it's fast, free to host, and has nothing to break in production.
+The site itself is **plain HTML + CSS + JS** — Vercel just serves files, so it's fast and cheap. There's no database. The only server-side code is a single serverless function, `/api/publish`, used **only when you click Publish** in the CMS: it commits your content to GitHub so Vercel can redeploy. Visitors never touch it. Content comes from `content.js`, and forms POST directly to Formspree. Nothing dynamic runs on a normal page view.
 
 ## Production files included
 
