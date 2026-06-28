@@ -120,7 +120,7 @@
             (it.meta ? '<span class="tag tag-gold">' + esc(it.meta) + "</span>" : "") + "</div>" +
           "<h3>" + esc(it.title) + "</h3>" +
           "<p>" + esc(it.excerpt) + "</p>" +
-          (it.link ? '<a class="story-link" href="' + safeUrl(it.link) + '">Read more</a>' : "") +
+          (it.link ? '<a class="story-link" href="' + safeUrl(it.link) + '"' + (/^https?:/i.test(it.link) ? ' target="_blank" rel="noopener"' : "") + ">Read more</a>" : "") +
         "</div></article>";
     }).join("");
   })();
@@ -137,7 +137,7 @@
             (it.meta ? '<span class="tag tag-gold">' + esc(it.meta) + "</span>" : "") + "</div>" +
           "<h3>" + esc(it.title) + "</h3>" +
           "<p>" + esc(it.excerpt) + "</p>" +
-          (it.link ? '<a class="story-link" href="' + safeUrl(it.link) + '">Read article</a>' : "") +
+          (it.link ? '<a class="story-link" href="' + safeUrl(it.link) + '"' + (/^https?:/i.test(it.link) ? ' target="_blank" rel="noopener"' : "") + ">Read article</a>" : "") +
         "</div></article>";
     }).join("");
   })();
