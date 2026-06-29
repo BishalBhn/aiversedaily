@@ -42,7 +42,7 @@
         "href": "#contribute"
       },
       {
-        "label": "About",
+        "label": "About Us",
         "href": "#about"
       }
     ]
@@ -124,43 +124,34 @@
   },
   "blogs": {
     "heading": "From the blog",
-    "sub": "Fresh analysis on the AI shifts that matter — updated for what’s happening right now.",
+    "sub": "Longer reads, analysis, and practical takeaways you can save for later.",
     "items": [
       {
-        "slug": "model-wars-june-2026",
         "tag": "News & Tools",
         "tagColor": "violet",
         "thumb": "violet",
-        "meta": "6 min read",
-        "title": "The Model Wars Hit a New Peak: Making Sense of June’s Releases",
-        "excerpt": "Gemini 2.5 Pro with Deep Think, GPT-5.5, and Claude Opus 4.8’s million-token context all landed within weeks of each other — while Microsoft’s new in-house models push prices down. Here’s what actually changed, and how to pick a model without chasing every benchmark.",
-        "body": "The first half of 2026 has felt less like a series of product launches and more like an arms race playing out in public. In the span of a few weeks, three of the biggest labs shipped their most capable models yet — and the gaps between them narrowed to the point where the question of which model is best now depends almost entirely on what you are trying to do.\n\n## What actually shipped\nGoogle’s Gemini 2.5 Pro with Deep Think arrived in late June and, on most public benchmarks, looks like the strongest general-purpose model available right now. OpenAI’s GPT-5.5 and Anthropic’s Claude Opus 4.8 — the latter shipping with a one-million-token context window by default — landed close behind. Each has a personality: some are stronger at long, careful reasoning, others at speed and tool use.\n\n## The quieter story: prices are falling\nWhile the frontier grabbed headlines, the more important shift for most people was happening underneath it. Microsoft unveiled a family of in-house models designed to cut costs and reduce its reliance on any single provider. Cheaper, good-enough models are now capable enough for the majority of everyday tasks — which means the question is shifting from “what’s the most powerful model?” to “what’s the cheapest model that clears my bar?”\n\n## How to choose without chasing benchmarks\nPick a real task you do often. Run it through two or three models. Judge the output, the speed, and the cost — not the leaderboard. For most people, the best model is the one that disappears into the work, not the one that wins this week’s benchmark. The labs will leapfrog each other again next month; your workflow shouldn’t have to.",
-        "sourceName": "CNBC",
-        "sourceUrl": "https://www.cnbc.com/2026/06/02/microsoft-unveils-new-ai-models-lessen-reliance-on-openai-lower-costs.html"
+        "meta": "7 min read",
+        "title": "The Model Wars Heat Up: Your June AI News Roundup",
+        "excerpt": "A clear breakdown of the latest model releases, the rise of multi-model tools, and what matters for people choosing between today’s top AI systems.",
+        "link": "#blogs"
       },
       {
-        "slug": "ai-agents-grew-up-2026",
-        "tag": "AI Agents",
+        "tag": "Beginner's Guide",
         "tagColor": "teal",
         "thumb": "teal",
-        "meta": "7 min read",
-        "title": "AI Agents Grew Up in 2026 — and Moved Into Real Jobs",
-        "excerpt": "Nearly a third of enterprises now run an AI agent in production, most new business apps ship with one built in, and teams report payback in months, not years. We break down where agents are genuinely working, where they still flop, and what ‘agent governance’ means for everyone else.",
-        "body": "For two years, “AI agents” mostly meant demos: impressive on stage, fragile in real life. In 2026, that changed. Agents quietly moved from slideware into the systems people actually use to do their jobs.\n\n## The numbers tell the story\nRoughly a third of enterprises now run at least one AI agent in production, and the large majority of new or updated business applications ship with an agent built in. Adoption isn’t even — banking and insurance lead, while healthcare and government move more cautiously — but the direction is unmistakable. Just as telling: median time-to-value on agent projects is now measured in months, with some sales and support agents paying for themselves in well under half a year.\n\n## Where agents actually work\nThe wins cluster around high-volume, well-defined, measurable work: customer support, IT and software tasks, sales operations, and finance back-office. These are jobs where a mistake is cheap to catch and the payoff is easy to count. Where agents still struggle is anything open-ended, ambiguous, or high-stakes without a human in the loop.\n\n## The new job: agent governance\nThe most interesting shift isn’t technical — it’s organizational. A growing share of companies now name a dedicated “agent owner” or “agentic ops” lead, and budgets are consolidating away from open-ended experiments toward a smaller number of scoped deployments with proven returns. The hype phase is ending; the operations phase is beginning.\n\n## What it means for you\nYou don’t need a fleet of agents to benefit from this. The lesson that scales down to individuals and small teams is the same one enterprises are learning: point agents at narrow, repetitive, checkable tasks — and keep a human watching the outcomes.",
-        "sourceName": "Gartner",
-        "sourceUrl": "https://www.gartner.com/en/articles/hype-cycle-for-agentic-ai"
+        "meta": "6 min read",
+        "title": "AI Agents, Explained Without the Jargon",
+        "excerpt": "An easy-to-follow explanation of what AI agents actually do, why they matter, and where they still fall short.",
+        "link": "#blogs"
       },
       {
-        "slug": "siri-runs-on-gemini",
-        "tag": "On Your Phone",
+        "tag": "Business & Productivity",
         "tagColor": "coral",
         "thumb": "coral",
         "meta": "5 min read",
-        "title": "Siri Runs on Gemini Now — and You Can Pick Claude Instead",
-        "excerpt": "At WWDC 2026, Apple rebuilt Siri on a custom Google Gemini model and, for the first time, will let you route questions to other assistants like Claude. We explain Apple’s new three-tier privacy setup and what choosing your own AI on iPhone really means for you.",
-        "body": "At WWDC 2026, Apple did something it had spent years avoiding: it admitted it needed help. The new Siri isn’t powered by an Apple model — it’s built on a custom Google Gemini model, under a multi-year deal reported at around a billion dollars a year.\n\n## A new Siri, built on someone else’s brain\nThe rebuilt assistant runs on a large custom Gemini model for its hardest queries, and it shows: Siri can finally hold a thread, follow multi-step requests, and act across your apps. It arrives as a standalone app and surfaces in the Dynamic Island with a simple “Search or Ask” prompt.\n\n## Your data doesn’t all go to Google\nApple’s answer to the obvious privacy question is a three-tier system. Simple requests are handled on-device by Apple’s own models. Mid-level tasks run through Apple’s Private Cloud Compute. Only the heaviest queries are routed to the Gemini model. In theory, most of what you ask never leaves Apple’s control.\n\n## The part that matters most: you get to choose\nThe biggest change is also the quietest. Through new “Extensions” in iOS 27, you’ll be able to route questions to other assistants — including Claude — instead of Siri. For the first time, the assistant baked into your iPhone becomes a choice rather than a default. If you prefer one model’s style, judgment, or privacy posture, you can make it your phone’s default brain.\n\n## Why it’s a big deal\nFor most people, the AI they actually use isn’t a chatbot they open on purpose — it’s the one within reach. Putting that choice in the user’s hands, on the most popular phone in the world, may do more to shape how ordinary people experience AI than any single model release.",
-        "sourceName": "TechCrunch",
-        "sourceUrl": "https://techcrunch.com/2026/06/08/wwdc-2026-what-to-expect-from-siris-highly-anticipated-revamp-to-apple-intelligence-and-ios-27/"
+        "title": "Three Ways Small Teams Are Actually Saving Time With AI",
+        "excerpt": "Three practical ways teams are using AI to reduce busywork, get faster drafts, and make everyday operations less messy.",
+        "link": "#blogs"
       }
     ]
   },
@@ -303,7 +294,7 @@
     ]
   },
   "about": {
-    "eyebrow": "About",
+    "eyebrow": "About Us",
     "heading": "AI news that helps you adapt, not panic",
     "intro": "AIverse Daily exists to make the AI era navigable for beginners, busy professionals, students, and creators. We choose clarity over hype, usefulness over noise, and practical next steps over vague excitement.",
     "principles": [
